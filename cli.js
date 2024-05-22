@@ -3,6 +3,7 @@ const axios = require("axios");
 const https = require("https");
 const path = require("path");
 const fs = require("fs");
+const API_KEY = require("./config/apiKey");
 require("dotenv").config();
 
 const BASE_URL = "https://localhost:6969/api";
@@ -12,6 +13,9 @@ const axiosInstance = axios.create({
   httpsAgent: new https.Agent({
     rejectUnauthorized: false,
   }),
+  headers: {
+    "x-api-key": API_KEY,
+  },
 });
 
 // Function to prompt for schema fields

@@ -37,6 +37,7 @@ BackendRD is a flexible backend project that allows you to dynamically create da
    ```plaintext
    MONGO_URI=your_mongodb_connection_string
    JWT_SECRET=your_jwt_secret_key
+   API_KEY=your_api_key
    ```
 
 ### Creating SSL Certificates

@@ -1,6 +1,7 @@
 const express = require("express");
 const connectDB = require("./config/db");
 const rateLimit = require("./middleware/rateLimit");
+const apiKeyAuth = require("./middleware/apiKeyAuth");
 const logger = require("./config/logger");
 const createDynamicModel = require("./models/DynamicModel");
 const Schema = require("./models/Schema");
@@ -14,6 +15,7 @@ connectDB();
 // Middleware
 app.use(express.json());
 app.use(rateLimit);
+app.use(apiKeyAuth);
 
 // Load dynamic schemas on startup
 const loadSchemas = async () => {
