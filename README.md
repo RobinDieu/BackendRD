@@ -23,8 +23,8 @@ BackendRD is a flexible backend project that allows you to dynamically create da
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/your-username/your-repository.git
-   cd your-repository
+   git clone https://github.com/RobinDieu/BackendRD.git
+   cd BackendRD
    ```
 
 2. Install dependencies:
@@ -39,15 +39,96 @@ BackendRD is a flexible backend project that allows you to dynamically create da
    JWT_SECRET=your_jwt_secret_key
    ```
 
+### Creating SSL Certificates
+
+#### On Linux/Unix
+
+1. **Install OpenSSL** (if not already installed):
+
+   ```bash
+   sudo apt update
+   sudo apt install openssl
+   ```
+
+2. **Create a directory for the certificates**:
+
+   ```bash
+   mkdir ~/certs
+   cd ~/certs
+   ```
+
+3. **Generate a private key**:
+
+   ```bash
+   openssl genrsa -out key.pem 2048
+   ```
+
+4. **Create a Certificate Signing Request (CSR)**:
+
+   ```bash
+   openssl req -new -key key.pem -out cert.csr
+   ```
+
+5. **Generate a self-signed certificate**:
+
+   ```bash
+   openssl x509 -req -days 365 -in cert.csr -signkey key.pem -out cert.pem
+   ```
+
+6. **Move the certificates to the appropriate directory**:
+   ```bash
+   sudo mkdir -p /etc/ssl/certs
+   sudo cp key.pem cert.pem /etc/ssl/certs/
+   ```
+
+#### On Windows
+
+1. **Install OpenSSL**:
+
+   - Download and install OpenSSL from the [OpenSSL Windows binaries](https://slproweb.com/products/Win32OpenSSL.html).
+
+2. **Open Command Prompt** and navigate to the OpenSSL installation directory:
+
+   ```cmd
+   cd C:\OpenSSL-Win64\bin
+   ```
+
+3. **Generate a private key**:
+
+   ```cmd
+   openssl genrsa -out key.pem 2048
+   ```
+
+4. **Create a Certificate Signing Request (CSR)**:
+
+   ```cmd
+   openssl req -new -key key.pem -out cert.csr
+   ```
+
+5. **Generate a self-signed certificate**:
+
+   ```cmd
+   openssl x509 -req -days 365 -in cert.csr -signkey key.pem -out cert.pem
+   ```
+
+6. **Move the certificates to the appropriate directory**:
+   - Create a directory for the certificates (e.g., `C:\certs`) and move `key.pem` and `cert.pem` to this directory.
+
 ### Running the Project
 
-1. Start the server:
+1. **Create or provide your own SSL certificates**:
+
+   - Create a `cert` folder in the root directory.
+   - Add your `key.pem` and `cert.pem` files to the `cert` folder.
+   - Alternatively, if you do not want to use HTTPS, you can comment out the HTTPS setup in `server.js`.
+
+2. Start the server:
 
    ```bash
    npm start
    ```
 
-2. Use the CLI tool:
+3. Use the CLI tool:
    ```bash
    npm run cli
    ```
