@@ -18,6 +18,26 @@ const userSchema = new mongoose.Schema({
     type: [String],
     default: ["user"],
   },
+  googleId: {
+    type: String,
+    unique: true,
+    sparse: true,
+  },
+  facebookId: {
+    type: String,
+    unique: true,
+    sparse: true,
+  },
+  microsoftId: {
+    type: String,
+    unique: true,
+    sparse: true,
+  },
+  githubId: {
+    type: String,
+    unique: true,
+    sparse: true,
+  },
 });
 
 // Hash the password before saving the user model

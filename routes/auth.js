@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const auth = require("../middleware/auth");
 const role = require("../middleware/role");
+const passport = require("passport");
 const { validateRegister, validateLogin } = require("../middleware/validate");
 const logger = require("../config/logger");
 require("dotenv").config();
@@ -214,5 +215,115 @@ router.put("/user/role", async (req, res) => {
 router.get("/admin", auth, role(["admin"]), async (req, res) => {
   res.json({ msg: "Welcome, Admin!" });
 });
+
+// OAuth Routes
+
+// Google OAuth
+router.get(
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+router.get(
+  "/google/callback",
+  passport.authenticate("google", { session: false }),
+  (req, res) => {
+    const payload = {
+      user: {
+        id: req.user.id,
+        roles: req.user.roles,
+      },
+    };
+    jwt.sign(
+      payload,
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" },
+      (err, token) => {
+        if (err) throw err;
+        res.redirect(`/auth/success?token=${token}`);
+      }
+    );
+  }
+);
+
+// Facebook OAuth
+router.get(
+  "/facebook",
+  passport.authenticate("facebook", { scope: ["email"] })
+);
+router.get(
+  "/facebook/callback",
+  passport.authenticate("facebook", { session: false }),
+  (req, res) => {
+    const payload = {
+      user: {
+        id: req.user.id,
+        roles: req.user.roles,
+      },
+    };
+    jwt.sign(
+      payload,
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" },
+      (err, token) => {
+        if (err) throw err;
+        res.redirect(`/auth/success?token=${token}`);
+      }
+    );
+  }
+);
+
+// Microsoft OAuth
+router.get(
+  "/microsoft",
+  passport.authenticate("microsoft", { scope: ["user.read"] })
+);
+router.get(
+  "/microsoft/callback",
+  passport.authenticate("microsoft", { session: false }),
+  (req, res) => {
+    const payload = {
+      user: {
+        id: req.user.id,
+        roles: req.user.roles,
+      },
+    };
+    jwt.sign(
+      payload,
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" },
+      (err, token) => {
+        if (err) throw err;
+        res.redirect(`/auth/success?token=${token}`);
+      }
+    );
+  }
+);
+
+// GitHub OAuth
+router.get(
+  "/github",
+  passport.authenticate("github", { scope: ["user:email"] })
+);
+router.get(
+  "/github/callback",
+  passport.authenticate("github", { session: false }),
+  (req, res) => {
+    const payload = {
+      user: {
+        id: req.user.id,
+        roles: req.user.roles,
+      },
+    };
+    jwt.sign(
+      payload,
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" },
+      (err, token) => {
+        if (err) throw err;
+        res.redirect(`/auth/success?token=${token}`);
+      }
+    );
+  }
+);
 
 module.exports = router;

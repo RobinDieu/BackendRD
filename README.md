@@ -9,6 +9,7 @@ BackendRD is a flexible backend project that allows you to dynamically create da
 - User management (add, delete, update, list)
 - Export and import schemas and records using JSON files
 - Interactive CLI tool for managing the backend
+- Optional social media authentication (Google, Facebook, Microsoft, GitHub)
 
 ## Getting Started
 
@@ -133,6 +134,44 @@ BackendRD is a flexible backend project that allows you to dynamically create da
    ```bash
    npm run cli
    ```
+
+### Enabling Social Media Authentication
+
+### Prerequisites
+
+- Register your application with the desired OAuth provider(s) to obtain the necessary credentials.
+
+### Environment Variables
+
+Add the following environment variables to your `.env` file:
+
+#### Google
+
+```plaintext
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+```
+
+#### Facebook
+
+```plaintext
+FACEBOOK_APP_ID=your_facebook_app_id
+FACEBOOK_APP_SECRET=your_facebook_app_secret
+```
+
+#### Microsoft
+
+```plaintext
+MICROSOFT_CLIENT_ID=your_microsoft_client_id
+MICROSOFT_CLIENT_SECRET=your_microsoft_client_secret
+```
+
+#### GitHub
+
+```plaintext
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
+```
 
 ### CLI Commands
 
