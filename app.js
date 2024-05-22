@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const connectDB = require("./config/db");
 const rateLimit = require("./middleware/rateLimit");
 const apiKeyAuth = require("./middleware/apiKeyAuth");
@@ -13,6 +14,16 @@ const app = express();
 
 // Connect to database
 connectDB();
+
+// Configure CORS
+const corsOptions = {
+  origin: process.env.CORS_ORIGIN || "http://localhost:3000",
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true, // Allow cookies to be sent with requests
+  optionsSuccessStatus: 204,
+};
+
+app.use(cors(corsOptions));
 
 // Middleware
 app.use(express.json());
