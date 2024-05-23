@@ -30,6 +30,7 @@
     "passport-github": "^1.1.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-microsoft": "^2.1.0",
+    "pluralize": "^8.0.0",
     "selfsigned": "^2.4.1",
     "winston": "^3.13.0"
   }
