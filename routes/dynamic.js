@@ -3,12 +3,18 @@ const router = express.Router();
 const createDynamicModel = require("../models/DynamicModel");
 const Schema = require("../models/Schema");
 const logger = require("../config/logger");
+const pluralize = require("pluralize"); // Add pluralize library
+
+// Helper function to normalize model name
+const normalizeModelName = (modelName) => {
+  return pluralize(modelName.toLowerCase());
+};
 
 // @route   POST /api/dynamic/create
 // @desc    Create a new dynamic schema
 // @access  Public
 router.post("/create", async (req, res) => {
-  const { modelName, schemaDefinition } = req.body;
+  let { modelName, schemaDefinition } = req.body;
 
   if (!modelName || !schemaDefinition) {
     logger.warn(
@@ -19,7 +25,18 @@ router.post("/create", async (req, res) => {
       .json({ msg: "Model name and schema definition are required" });
   }
 
+  modelName = normalizeModelName(modelName);
+
   try {
+    // Check if a model with the same name already exists
+    const existingSchema = await Schema.findOne({ modelName });
+    if (existingSchema) {
+      logger.warn(
+        `Dynamic schema creation failed: Model ${modelName} already exists`
+      );
+      return res.status(400).json({ msg: `Model ${modelName} already exists` });
+    }
+
     const DynamicModel = createDynamicModel(modelName, schemaDefinition);
     await DynamicModel.init(); // Ensure indexes are created
 
@@ -39,7 +56,7 @@ router.post("/create", async (req, res) => {
 // @desc    Get the schema definition for a model
 // @access  Public
 router.get("/schema/:modelName", async (req, res) => {
-  const { modelName } = req.params;
+  const modelName = normalizeModelName(req.params.modelName);
 
   try {
     const schema = await Schema.findOne({ modelName });

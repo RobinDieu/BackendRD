@@ -2,10 +2,16 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 const logger = require("../config/logger");
+const pluralize = require("pluralize"); // Add pluralize library
+
+// Helper function to normalize model name
+const normalizeModelName = (modelName) => {
+  return pluralize(modelName.toLowerCase());
+};
 
 // Middleware to get the model dynamically
 const getModel = (req, res, next) => {
-  const { modelName } = req.params;
+  const modelName = normalizeModelName(req.params.modelName);
   if (!modelName) {
     logger.warn("Model name is required");
     return res.status(400).json({ msg: "Model name is required" });
