@@ -2,7 +2,7 @@ const spawn = require("cross-spawn");
 const path = require("path");
 const fs = require("fs");
 
-const setupElectronProject = (projectPath) => {
+const setupElectronProject = (projectPath, projectConfig) => {
   console.log("Setting up Electron project...");
 
   // Ensure the directory exists
@@ -59,16 +59,32 @@ app.on('activate', () => {
 });
   `;
   fs.writeFileSync(path.join(mainJsDir, "main.js"), mainJsContent);
-
   // Update package.json scripts
   const packageJsonPath = path.join(projectPath, "package.json");
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
+
+  let startScripts = [];
+  let individualScripts = {};
+
+  if (projectConfig.react) {
+    startScripts.push("npm run start:react");
+    individualScripts["start:react"] = "cd ../frontend && npm start";
+  }
+
+  if (projectConfig.electron) {
+    startScripts.push("npm run start:electron");
+    individualScripts["start:electron"] =
+      "wait-on http://localhost:3000 && electron .";
+  }
+
+  if (projectConfig.backend) {
+    startScripts.push("npm run start:backend");
+    individualScripts["start:backend"] = "cd ../backend && npm start";
+  }
+
   packageJson.scripts = {
-    start:
-      'concurrently "npm run start:react" "npm run start:electron" "npm run start:backend"',
-    "start:react": "cd ../frontend && npm start",
-    "start:electron": "wait-on http://localhost:3000 && electron .",
-    "start:backend": "cd ../backend && npm start",
+    start: `concurrently "${startScripts.join('" "')}"`,
+    ...individualScripts,
   };
   packageJson.main = "main.js";
   fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));

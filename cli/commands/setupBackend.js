@@ -43,7 +43,7 @@ GITHUB_CLIENT_SECRET=your_github_client_secret
 CORS_ORIGIN=http://localhost:3000
 
 # Base URL
-BASE_URL=https://localhost:6969/api
+BASE_URL=https://localhost:5000/api
 `;
   fs.writeFileSync(path.join(projectPath, ".env"), envContent);
 

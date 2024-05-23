@@ -22,23 +22,20 @@ const setupReactProject = (projectPath, projectConfig) => {
   const packageJsonPath = path.join(projectPath, "package.json");
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
 
+  // Install concurrently if not already installed
+  spawn.sync("npm", ["install", "concurrently"], { stdio: "inherit" });
+
+  let startScripts = ['"react-scripts start"'];
+
   if (projectConfig.backend && !projectConfig.electron) {
-    // Install concurrently if not already installed
-    spawn.sync("npm", ["install", "concurrently"], { stdio: "inherit" });
-
-    packageJson.scripts = {
-      ...packageJson.scripts,
-      start: 'concurrently "react-scripts start" "npm run start:backend"',
-      "start:backend": "cd ../backend && npm start",
-    };
-  } else {
-    spawn.sync("npm", ["install", "concurrently"], { stdio: "inherit" });
-
-    packageJson.scripts = {
-      ...packageJson.scripts,
-      start: 'concurrently "react-scripts start"',
-    };
+    startScripts.push('"npm run start:backend"');
+    packageJson.scripts["start:backend"] = "cd ../backend && npm start";
   }
+
+  packageJson.scripts = {
+    ...packageJson.scripts,
+    start: `concurrently ${startScripts.join(" ")}`,
+  };
 
   fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
   console.log("React project setup complete.");
