@@ -229,5 +229,4 @@ MICROSOFT_CLIENT_SECRET=your_microsoft_client_secret
 ```plaintext
 GITHUB_CLIENT_ID=your_github_client_id
 GITHUB_CLIENT_SECRET=your_github_client_secret
-``
 ```
