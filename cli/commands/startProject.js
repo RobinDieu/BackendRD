@@ -43,7 +43,7 @@ const startProject = async (projectName, options) => {
   }
 
   if (projectConfig.electron) {
-    setupElectronProject(path.join(projectPath, "electron"));
+    setupElectronProject(path.join(projectPath, "electron"), projectConfig);
   }
 
   console.log("Project setup complete.");
