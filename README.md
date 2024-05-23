@@ -10,6 +10,8 @@ BackendRD is a flexible backend project that allows you to dynamically create da
 - Export and import schemas and records using JSON files
 - Interactive CLI tool for managing the backend
 - Optional social media authentication (Google, Facebook, Microsoft, GitHub)
+- Project setup with options for React, Electron, and Backend
+- Automatic generation of SSL certificates for secure API communication
 
 ## Getting Started
 
@@ -35,145 +37,71 @@ BackendRD is a flexible backend project that allows you to dynamically create da
    ```
 
 3. Create a `.env` file in the root directory and add your environment variables:
+
    ```plaintext
    MONGO_URI=your_mongodb_connection_string
    JWT_SECRET=your_jwt_secret_key
    API_KEY=your_api_key
+   SESSION_SECRET=your_session_secret
+
+   # OAuth Credentials
+   GOOGLE_CLIENT_ID=your_google_client_id
+   GOOGLE_CLIENT_SECRET=your_google_client_secret
+   FACEBOOK_APP_ID=your_facebook_app_id
+   FACEBOOK_APP_SECRET=your_facebook_app_secret
+   MICROSOFT_CLIENT_ID=your_microsoft_client_id
+   MICROSOFT_CLIENT_SECRET=your_microsoft_client_secret
+   GITHUB_CLIENT_ID=your_github_client_id
+   GITHUB_CLIENT_SECRET=your_github_client_secret
+
+   # CORS Origin
+   CORS_ORIGIN=http://localhost:3000
+
+   # Base URL
+   BASE_URL=https://localhost:6969/api
+
+   # Default Project Path
+   DEFAULT_PROJECT_PATH=/path/to/default/directory
    ```
 
-### Creating SSL Certificates
-
-#### On Linux/Unix
-
-1. **Install OpenSSL** (if not already installed):
+4. Generate SSL certificates:
 
    ```bash
-   sudo apt update
-   sudo apt install openssl
+   node generate-certs.js
    ```
-
-2. **Create a directory for the certificates**:
-
-   ```bash
-   mkdir ~/certs
-   cd ~/certs
-   ```
-
-3. **Generate a private key**:
-
-   ```bash
-   openssl genrsa -out key.pem 2048
-   ```
-
-4. **Create a Certificate Signing Request (CSR)**:
-
-   ```bash
-   openssl req -new -key key.pem -out cert.csr
-   ```
-
-5. **Generate a self-signed certificate**:
-
-   ```bash
-   openssl x509 -req -days 365 -in cert.csr -signkey key.pem -out cert.pem
-   ```
-
-6. **Move the certificates to the appropriate directory**:
-   ```bash
-   sudo mkdir -p /etc/ssl/certs
-   sudo cp key.pem cert.pem /etc/ssl/certs/
-   ```
-
-#### On Windows
-
-1. **Install OpenSSL**:
-
-   - Download and install OpenSSL from the [OpenSSL Windows binaries](https://slproweb.com/products/Win32OpenSSL.html).
-
-2. **Open Command Prompt** and navigate to the OpenSSL installation directory:
-
-   ```cmd
-   cd C:\OpenSSL-Win64\bin
-   ```
-
-3. **Generate a private key**:
-
-   ```cmd
-   openssl genrsa -out key.pem 2048
-   ```
-
-4. **Create a Certificate Signing Request (CSR)**:
-
-   ```cmd
-   openssl req -new -key key.pem -out cert.csr
-   ```
-
-5. **Generate a self-signed certificate**:
-
-   ```cmd
-   openssl x509 -req -days 365 -in cert.csr -signkey key.pem -out cert.pem
-   ```
-
-6. **Move the certificates to the appropriate directory**:
-   - Create a directory for the certificates (e.g., `C:\certs`) and move `key.pem` and `cert.pem` to this directory.
 
 ### Running the Project
 
-1. **Create or provide your own SSL certificates**:
-
-   - Create a `cert` folder in the root directory.
-   - Add your `key.pem` and `cert.pem` files to the `cert` folder.
-   - Alternatively, if you do not want to use HTTPS, you can comment out the HTTPS setup in `server.js`.
-
-2. Start the server:
+1. Start the server:
 
    ```bash
    npm start
    ```
 
-3. Use the CLI tool:
+2. Use the CLI tool:
    ```bash
    npm run cli
    ```
 
-### Enabling Social Media Authentication
+### Using the CLI Tool
 
-### Prerequisites
+The CLI tool allows you to manage the backend and set up new projects with options for React, Electron, and Backend.
 
-- Register your application with the desired OAuth provider(s) to obtain the necessary credentials.
+#### Starting a New Project
 
-### Environment Variables
+1. **Run the CLI Tool**:
 
-Add the following environment variables to your `.env` file:
+   ```bash
+   npm run cli start-project [options] <projectName>
+   ```
 
-#### Google
+   Options:
 
-```plaintext
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-```
+   - `-p, --path <path>`: Specify the full path of the directory where the project should be created.
 
-#### Facebook
+   The CLI will prompt you to select the project types (React, Electron, Backend). Based on your selection, it will set up the appropriate project structure and install the necessary dependencies.
 
-```plaintext
-FACEBOOK_APP_ID=your_facebook_app_id
-FACEBOOK_APP_SECRET=your_facebook_app_secret
-```
-
-#### Microsoft
-
-```plaintext
-MICROSOFT_CLIENT_ID=your_microsoft_client_id
-MICROSOFT_CLIENT_SECRET=your_microsoft_client_secret
-```
-
-#### GitHub
-
-```plaintext
-GITHUB_CLIENT_ID=your_github_client_id
-GITHUB_CLIENT_SECRET=your_github_client_secret
-```
-
-### CLI Commands
+#### CLI Commands
 
 - **Create a new dynamic schema**:
 
@@ -224,6 +152,85 @@ GITHUB_CLIENT_SECRET=your_github_client_secret
   ```
 
 - **List all users' emails**:
+
   ```bash
   npm run cli list-users
   ```
+
+- **Export all schemas to a JSON file**:
+
+  ```bash
+  npm run cli export-schemas <filePath>
+  ```
+
+- **Export all records of a model to a JSON file**:
+
+  ```bash
+  npm run cli export-records <modelName> <filePath>
+  ```
+
+- **Search and filter records of a dynamic schema**:
+
+  ```bash
+  npm run cli search-records <modelName>
+  ```
+
+- **Add a role to a user**:
+
+  ```bash
+  npm run cli add-role <email> <role>
+  ```
+
+- **Remove a role from a user**:
+
+  ```bash
+  npm run cli remove-role <email> <role>
+  ```
+
+- **Import users from a JSON file**:
+
+  ```bash
+  npm run cli import-users <filePath>
+  ```
+
+### Enabling Social Media Authentication
+
+#### Prerequisites
+
+- Register your application with the desired OAuth provider(s) to obtain the necessary credentials.
+
+#### Environment Variables
+
+Add the following environment variables to your `.env` file:
+
+##### Google
+
+```plaintext
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+```
+
+##### Facebook
+
+```plaintext
+FACEBOOK_APP_ID=your_facebook_app_id
+FACEBOOK_APP_SECRET=your_facebook_app_secret
+```
+
+##### Microsoft
+
+```plaintext
+MICROSOFT_CLIENT_ID=your_microsoft_client_id
+MICROSOFT_CLIENT_SECRET=your_microsoft_client_secret
+```
+
+##### GitHub
+
+```plaintext
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
+```
+
+### Summary
+
+By following these steps, you can set up and run BackendRD with options for React, Electron, and Backend. The CLI tool provides a seamless way to manage the backend and set up new projects, ensuring a smooth development experience. If you choose to run the backend without using the CLI tool, make sure to provide your own SSL certificates for secure API communication.
