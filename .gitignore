@@ -13,6 +13,8 @@ yarn-error.log*
 
 # Environment variables
 .env
+
+# SSL Certificates
 cert/
 
 # Dependency directories

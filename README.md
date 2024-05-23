@@ -229,8 +229,5 @@ MICROSOFT_CLIENT_SECRET=your_microsoft_client_secret
 ```plaintext
 GITHUB_CLIENT_ID=your_github_client_id
 GITHUB_CLIENT_SECRET=your_github_client_secret
+``
 ```
-
-### Summary
-
-By following these steps, you can set up and run BackendRD with options for React, Electron, and Backend. The CLI tool provides a seamless way to manage the backend and set up new projects, ensuring a smooth development experience. If you choose to run the backend without using the CLI tool, make sure to provide your own SSL certificates for secure API communication.

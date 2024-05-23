@@ -1,6 +1,5 @@
 const express = require("express");
 const cors = require("cors");
-const connectDB = require("./config/db");
 const rateLimit = require("./middleware/rateLimit");
 const apiKeyAuth = require("./middleware/apiKeyAuth");
 const passportAuth = require("./middleware/passportAuth");
@@ -11,9 +10,6 @@ const Schema = require("./models/Schema");
 require("dotenv").config();
 
 const app = express();
-
-// Connect to database
-connectDB();
 
 // Configure CORS
 const corsOptions = {
