@@ -12,7 +12,7 @@ if (!fs.existsSync(certDir)) {
 }
 
 // Write the certificates to files
-fs.writeFileSync(path.join(certDir, "cert.pem"), certs.cert);
-fs.writeFileSync(path.join(certDir, "key.pem"), certs.private);
+fs.writeFileSync(path.join(certDir, "cert.pem"), cert.cert);
+fs.writeFileSync(path.join(certDir, "key.pem"), cert.private);
 
 console.log("SSL certificates generated successfully in the certs directory.");
