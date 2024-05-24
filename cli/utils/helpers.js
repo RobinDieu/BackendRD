@@ -260,7 +260,9 @@ const createReactQueryFiles = (srcPath) => {
   
   export const useLogin = () => {
     return useMutation({
-      mutationFn: ({ email, password }) => login(email, password),
+      mutationFn: ({ email, password }) => {
+        return login({ email, password });
+      },
       onSuccess: (data) => {
         localStorage.setItem("token", data.token);
       },
@@ -269,12 +271,14 @@ const createReactQueryFiles = (srcPath) => {
   
   export const useRegister = () => {
     return useMutation({
-      mutationFn: ({ email, password }) => register(email, password),
+      mutationFn: ({ email, password }) => {
+        return register(email, password);
+      },
       onSuccess: (data) => {
         localStorage.setItem("token", data.token);
       },
     });
-  };
+  };  
   
 `;
 
@@ -406,21 +410,25 @@ import { useLogin } from "../hooks/useAuth";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { mutate: login, isLoading, error } = useLogin();
+  const { mutate: login, isLoading } = useLogin();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
 
   const validate = () => {
     const errors = {};
-    if (!/^\S+@\S+$/.test(email)) {
+    if (!/^\S+@\S+$/.test(formData.email)) {
       errors.email = "Invalid email";
     }
-    if (password.length === 0) {
-      errors.password = "Password is required";
+    if (formData.password.length < 6) {
+      errors.password = "Password must be at least 6 characters";
     }
     return errors;
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = (e) => {
@@ -429,14 +437,14 @@ const Login = () => {
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
     } else {
-      login(
-        { email, password },
-        {
-          onSuccess: () => {
-            navigate("/recipes");
-          },
-        }
-      );
+      login(formData, {
+        onSuccess: () => {
+          navigate("/loggedIn");
+        },
+        onError: (validationErrors) => {
+          setErrors(validationErrors);
+        },
+      });
     }
   };
 
@@ -453,9 +461,10 @@ const Login = () => {
             <label htmlFor="email">Email</label>
             <input
               type="email"
+              name="email"
               id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={formData.email}
+              onChange={handleChange}
               required
             />
             {errors.email && <span>{errors.email}</span>}
@@ -465,8 +474,9 @@ const Login = () => {
             <input
               type="password"
               id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
               required
             />
             {errors.password && <span>{errors.password}</span>}
@@ -476,7 +486,7 @@ const Login = () => {
               {isLoading ? "Logging in..." : "Login"}
             </button>
           </div>
-          {error && <span>{error.message}</span>}
+          {errors && <span>{errors.message}</span>}
         </form>
       </div>
     </div>
