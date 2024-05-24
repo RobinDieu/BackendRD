@@ -35,7 +35,7 @@ const startProject = async (projectName, options) => {
   const projectConfig = getProjectConfig(projectTypes);
 
   if (projectConfig.backend) {
-    setupBackendProject(path.join(projectPath, "backend"));
+    setupBackendProject(path.join(projectPath, "backend"), projectConfig);
   }
 
   if (projectConfig.react) {
