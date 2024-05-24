@@ -2,10 +2,10 @@
   "name": "backendrd",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "server": "node server.js",
-    "cli": "dotenv -- node cli/cli.js"
+    "cli": "node cli/cli.js"
   },
   "keywords": [],
   "author": "",

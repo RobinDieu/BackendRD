@@ -56,13 +56,6 @@ BASE_URL=https://localhost:5000/api
   fs.writeFileSync(path.join(certsDir, "cert.pem"), certs.cert);
   fs.writeFileSync(path.join(certsDir, "key.pem"), certs.private);
 
-  // Ensure package.json has the correct scripts
-  const packageJsonPath = path.join(projectPath, "package.json");
-  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
-  packageJson.main = "server.js";
-  packageJson.scripts.server = "node server.js";
-  packageJson.scripts.cli = "node cli/cli.js";
-
   console.log("Backend project setup complete.");
 };
 
