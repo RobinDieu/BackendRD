@@ -15,6 +15,7 @@ const { searchRecords } = require("./commands/searchRecords");
 const { addRole } = require("./commands/addRole");
 const { removeRole } = require("./commands/removeRole");
 const { importUsers } = require("./commands/importUsers");
+const { listRoutes } = require("./commands/listRoutes");
 require("dotenv").config();
 
 program
@@ -96,5 +97,10 @@ program
   .command("import-users <filePath>")
   .description("Import users from a JSON file")
   .action(importUsers);
+
+program
+  .command("list-routes")
+  .description("List all backend routes")
+  .action(listRoutes);
 
 program.parse(process.argv);

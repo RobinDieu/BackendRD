@@ -1,0 +1,112 @@
+{
+  "routes": [
+    {
+      "method": "POST",
+      "path": "/api/auth/register",
+      "description": "Register a new user",
+      "access": "Public"
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/login",
+      "description": "Authenticate user and get token",
+      "access": "Public"
+    },
+    {
+      "method": "GET",
+      "path": "/api/auth/users",
+      "description": "Get all users' emails",
+      "access": "Public"
+    },
+    {
+      "method": "GET",
+      "path": "/api/auth/user",
+      "description": "Get user data",
+      "access": "Private"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/auth/user",
+      "description": "Delete a user by email",
+      "access": "Public"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/auth/user",
+      "description": "Update a user's email or password",
+      "access": "Public"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/auth/user/role",
+      "description": "Add or remove a role from a user",
+      "access": "Public"
+    },
+    {
+      "method": "GET",
+      "path": "/api/auth/admin",
+      "description": "Admin route",
+      "access": "Private (Admin only)"
+    },
+    {
+      "method": "POST",
+      "path": "/api/dynamic/create",
+      "description": "Create a new dynamic schema",
+      "access": "Public"
+    },
+    {
+      "method": "GET",
+      "path": "/api/dynamic/schema/:modelName",
+      "description": "Get the schema definition for a model",
+      "access": "Public"
+    },
+    {
+      "method": "GET",
+      "path": "/api/dynamic/schemas",
+      "description": "Get all schemas",
+      "access": "Public"
+    },
+    {
+      "method": "POST",
+      "path": "/api/:modelName",
+      "description": "Create a new document",
+      "access": "Public"
+    },
+    {
+      "method": "GET",
+      "path": "/api/:modelName",
+      "description": "Get all documents with pagination, sorting, and filtering",
+      "access": "Public"
+    },
+    {
+      "method": "GET",
+      "path": "/api/:modelName/:id",
+      "description": "Get a document by ID",
+      "access": "Public"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/:modelName/:id",
+      "description": "Update a document by ID",
+      "access": "Public"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/:modelName/:id",
+      "description": "Delete a document by ID",
+      "access": "Public"
+    },
+    {
+      "method": "POST",
+      "path": "/api/:modelName/batch",
+      "description": "Batch create documents",
+      "access": "Public"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/:modelName/batch",
+      "description": "Batch delete documents by IDs",
+      "access": "Public"
+    }
+  ]
+}
