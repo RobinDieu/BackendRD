@@ -1,20 +1,19 @@
 const spawn = require("cross-spawn");
-const path = require("path");
-const fs = require("fs");
 const {
   createApiAndQueryFiles,
-  createEnvFile,
+  createEnvFileReact,
   createOrUpdateComponentFiles,
   installAdditionalDependencies,
   addApiGenerationScriptToBackend,
-} = require("../utils/index");
+  updatePackageJsonScriptsReact,
+} = require("../utils");
 
 const setupReactProject = (projectPath, projectConfig) => {
   console.log("Setting up React project...");
 
   initializeReactApp(projectPath);
-  createEnvFile(projectPath);
-  updatePackageJsonScripts(projectPath, projectConfig);
+  createEnvFileReact(projectPath);
+  updatePackageJsonScriptsReact(projectPath, projectConfig);
 
   if (projectConfig.backend) {
     setupReactWithBackend(projectPath, projectConfig);

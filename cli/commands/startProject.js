@@ -8,7 +8,8 @@ const {
   createProjectDirectory,
   getProjectTypes,
   createOrUpdateIndexFile,
-} = require("../utils/index");
+} = require("../utils");
+const path = require("path");
 require("dotenv").config();
 
 const startProject = async (projectName, options) => {

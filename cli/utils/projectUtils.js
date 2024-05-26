@@ -1,6 +1,11 @@
 const path = require("path");
 const fs = require("fs");
-const inquirer = require("inquirer");
+
+let inquirer;
+
+(async () => {
+  inquirer = (await import("inquirer")).default;
+})();
 
 const getProjectConfig = (projectTypes) => {
   const projectConfig = {
@@ -52,6 +57,10 @@ const createProjectDirectory = (projectPath, projectName) => {
 };
 
 const getProjectTypes = async () => {
+  while (!inquirer) {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+  }
+
   const { frontendType } = await inquirer.prompt([
     {
       type: "list",

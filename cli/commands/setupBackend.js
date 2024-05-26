@@ -1,10 +1,11 @@
 const {
   cloneBackendRepo,
   installDependencies,
-  createEnvFile,
+  createEnvFileBackend,
   generateSelfSignedCerts,
   setupServerFile,
-} = require("../utils/index");
+} = require("../utils");
+const path = require("path");
 
 const setupBackendProject = (projectPath, projectConfig) => {
   console.log("Setting up Backend project...");
@@ -16,7 +17,7 @@ const setupBackendProject = (projectPath, projectConfig) => {
   installDependencies(projectPath);
 
   const protocol = projectConfig.react ? "http" : "https";
-  createEnvFile(projectPath, projectName, protocol);
+  createEnvFileBackend(projectPath, projectName, protocol);
   generateSelfSignedCerts(projectPath);
 
   if (projectConfig.react) {

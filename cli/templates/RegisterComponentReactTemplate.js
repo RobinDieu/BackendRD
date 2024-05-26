@@ -54,7 +54,7 @@ const Register = () => {
     <div>
       <h1>Create an Account</h1>
       <p>
-        Already have an account? <a href="/login">Login</a>
+        Already have an account? <a href="/">Login</a>
       </p>
 
       <form onSubmit={handleSubmit}>

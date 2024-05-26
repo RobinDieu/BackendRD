@@ -1,6 +1,8 @@
 const fs = require("fs");
 const path = require("path");
-const { readAndWriteTemplate, envReactContent } = require("./index");
+const { readAndWriteTemplate } = require("./templateUtils");
+const { envReactContent } = require("./envUtils");
+const spawn = require("cross-spawn");
 
 const createIndexFileContent = (projectConfig) => {
   let imports = `import React from "react";\nimport { createRoot } from "react-dom/client";\n`;
@@ -98,11 +100,11 @@ const createApiAndQueryFiles = (projectPath, projectConfig) => {
   createOrUpdateIndexFile(path.join(projectPath, "src"), projectConfig);
 };
 
-const createEnvFile = (projectPath) => {
+const createEnvFileReact = (projectPath) => {
   fs.writeFileSync(path.join(projectPath, ".env"), envReactContent);
 };
 
-const updatePackageJsonScripts = (projectPath, projectConfig) => {
+const updatePackageJsonScriptsReact = (projectPath, projectConfig) => {
   const packageJsonPath = path.join(projectPath, "package.json");
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
 
@@ -165,9 +167,10 @@ const addApiGenerationScriptToBackend = (projectPath) => {
 
 module.exports = {
   createOrUpdateComponentFiles,
-  createEnvFile,
+  createEnvFileReact,
   createApiAndQueryFiles,
-  updatePackageJsonScripts,
+  createOrUpdateIndexFile,
+  updatePackageJsonScriptsReact,
   installAdditionalDependencies,
   addApiGenerationScriptToBackend,
 };

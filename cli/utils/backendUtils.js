@@ -2,7 +2,7 @@ const spawn = require("cross-spawn");
 const path = require("path");
 const fs = require("fs");
 const selfsigned = require("selfsigned");
-const { envBackupContent } = require("../utils/index");
+const { envBackupContent } = require("../utils/envUtils");
 const { readAndWriteTemplate } = require("../utils/templateUtils");
 
 const cloneBackendRepo = (projectPath) => {

@@ -15,11 +15,12 @@ const {
 } = require("./projectUtils");
 const {
   createOrUpdateComponentFiles,
-  createEnvFile,
-  updatePackageJsonScripts,
+  createEnvFileReact,
+  updatePackageJsonScriptsReact,
   createApiAndQueryFiles,
   installAdditionalDependencies,
   addApiGenerationScriptToBackend,
+  createOrUpdateIndexFile,
 } = require("./reactUtils");
 const {
   cloneBackendRepo,
@@ -51,13 +52,14 @@ module.exports = {
   envBackupContent,
   envReactContent,
   createApiAndQueryFiles,
-  createEnvFile,
-  updatePackageJsonScripts,
+  createEnvFileReact,
+  updatePackageJsonScriptsReact,
   installAdditionalDependencies,
   addApiGenerationScriptToBackend,
   cloneBackendRepo,
   installDependencies,
   createEnvFileBackend,
+  createOrUpdateIndexFile,
   generateSelfSignedCerts,
   setupServerFile,
   getProjectPath,
