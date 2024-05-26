@@ -1,19 +1,8 @@
-const axios = require("axios");
-const https = require("https");
-const API_KEY = require("../config/apiKey");
+const { createAxiosInstance } = require("../utils");
 require("dotenv").config();
 
 const BASE_URL = process.env.BASE_URL;
-
-// Create an axios instance with custom httpsAgent
-const axiosInstance = axios.create({
-  httpsAgent: new https.Agent({
-    rejectUnauthorized: false,
-  }),
-  headers: {
-    "x-api-key": API_KEY,
-  },
-});
+const axiosInstance = createAxiosInstance();
 
 const deleteUser = async (email) => {
   try {

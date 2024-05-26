@@ -1,11 +1,9 @@
-// cli/commands/setupBackend.js
-const spawn = require("cross-spawn");
-const path = require("path");
-const fs = require("fs");
-const selfsigned = require("selfsigned");
 const {
-  serverJsWithoutHttpsContent,
-  envBackupContent,
+  cloneBackendRepo,
+  installDependencies,
+  createEnvFile,
+  generateSelfSignedCerts,
+  setupServerFile,
 } = require("../utils/index");
 
 const setupBackendProject = (projectPath, projectConfig) => {
@@ -14,39 +12,15 @@ const setupBackendProject = (projectPath, projectConfig) => {
   const projectPathArray = projectPath.split(path.sep);
   const projectName = projectPathArray[projectPathArray.length - 2];
 
-  // Clone the backend repository
-  spawn.sync(
-    "git",
-    ["clone", "https://github.com/RobinDieu/BackendRD.git", projectPath],
-    { stdio: "inherit" }
-  );
-
-  // Navigate to project directory
-  process.chdir(projectPath);
-
-  // Install dependencies
-  spawn.sync("npm", ["install"], { stdio: "inherit" });
+  cloneBackendRepo(projectPath);
+  installDependencies(projectPath);
 
   const protocol = projectConfig.react ? "http" : "https";
-
-  // Create .env file
-  const envContent = envBackupContent(projectName, protocol);
-  fs.writeFileSync(path.join(projectPath, ".env"), envContent);
-
-  // Generate self-signed certificates
-  const certs = selfsigned.generate(null, { days: 365 });
-  const certsDir = path.join(projectPath, "cert");
-  if (!fs.existsSync(certsDir)) {
-    fs.mkdirSync(certsDir, { recursive: true });
-  }
-  fs.writeFileSync(path.join(certsDir, "cert.pem"), certs.cert);
-  fs.writeFileSync(path.join(certsDir, "key.pem"), certs.private);
+  createEnvFile(projectPath, projectName, protocol);
+  generateSelfSignedCerts(projectPath);
 
   if (projectConfig.react) {
-    fs.writeFileSync(
-      path.join(projectPath, "server.js"),
-      serverJsWithoutHttpsContent
-    );
+    setupServerFile(projectPath, false);
   }
 
   console.log("Backend project setup complete.");

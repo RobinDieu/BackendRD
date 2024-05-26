@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const { readAndWriteTemplate, envReactContent } = require("./index");
 
 const createIndexFileContent = (projectConfig) => {
   let imports = `import React from "react";\nimport { createRoot } from "react-dom/client";\n`;
@@ -38,80 +39,18 @@ const createApiFiles = (apiPath) => {
     fs.mkdirSync(apiPath, { recursive: true });
   }
 
-  const authAPIContent = `import axiosInstance from "./axiosInstance";
-
-export const login = async ({ email, password }) => {
-  const response = await axiosInstance.post("/auth/login", { email, password });
-  return response.data;
-};
-
-export const register = async (email, password) => {
-  const response = await axiosInstance.post("/auth/register", {
-    email,
-    password,
-  });
-  return response.data;
-};
-`;
-
-  const axiosInstanceContent = `import axios from "axios";
-
-const API_URL =
-  process.env.REACT_APP_API_URL || "http://localhost:5000/api/";
-
-const API_KEY = process.env.REACT_APP_API_KEY || "YOU_SHOULD_CHANGE_THIS_TOO";
-
-if (!API_URL || !API_KEY) {
-  throw new Error(
-    "API_URL or API_KEY is not defined. Please check your environment variables."
+  readAndWriteTemplate(
+    "authAPIReactTemplate.js",
+    path.join(apiPath, "authAPI.js")
   );
-}
-
-const axiosInstance = axios.create({
-  baseURL: API_URL,
-  headers: {
-    "x-api-key": API_KEY,
-  },
-});
-
-export default axiosInstance;
-`;
-
-  const productAPIContent = `// Example API file for Products
-import axiosInstance from "./axiosInstance";
-
-export const getProducts = async () => {
-  const response = await axiosInstance.get("/products");
-  return response.data;
-};
-
-export const getProductById = async (id) => {
-  const response = await axiosInstance.get(\`/products/\${id}\`);
-  return response.data;
-};
-
-export const createProduct = async (productData) => {
-  const response = await axiosInstance.post("/products", productData);
-  return response.data;
-};
-
-export const updateProduct = async (id, productData) => {
-  const response = await axiosInstance.put(\`/products/\${id}\`, productData);
-  return response.data;
-};
-
-export const deleteProduct = async (id) => {
-  const response = await axiosInstance.delete(\`/products/\${id}\`);
-  return response.data;
-};
-`;
-
-  fs.writeFileSync(path.join(apiPath, "authAPI.js"), authAPIContent);
-  fs.writeFileSync(
-    path.join(apiPath, "axiosInstance.js"),
-    axiosInstanceContent
+  readAndWriteTemplate(
+    "axiosInstanceReactTemplate.js",
+    path.join(apiPath, "axiosInstance.js")
   );
-  fs.writeFileSync(path.join(apiPath, "productAPI.js"), productAPIContent);
+  readAndWriteTemplate(
+    "productAPIReactTemplate.js",
+    path.join(apiPath, "productAPI.js")
+  );
 
   console.log("API files created successfully.");
 };
@@ -122,369 +61,113 @@ const createReactQueryFiles = (srcPath) => {
     fs.mkdirSync(hooksPath, { recursive: true });
   }
 
-  const queryClientContent = `
-  import { QueryClient } from "@tanstack/react-query";
+  readAndWriteTemplate(
+    "queryClientReactTemplate.js",
+    path.join(srcPath, "queryClient.js")
+  );
 
-  const queryClient = new QueryClient();
-
-  export default queryClient;
-`;
-
-  const useAuthContent = `  
-  import { useMutation } from "@tanstack/react-query";
-  import { login, register } from "../api/authAPI";
-  
-  export const useLogin = () => {
-    return useMutation({
-      mutationFn: ({ email, password }) => {
-        return login({ email, password });
-      },
-      onSuccess: (data) => {
-        localStorage.setItem("token", data.token);
-      },
-    });
-  };
-  
-  export const useRegister = () => {
-    return useMutation({
-      mutationFn: ({ email, password }) => {
-        return register(email, password);
-      },
-      onSuccess: (data) => {
-        localStorage.setItem("token", data.token);
-      },
-    });
-  };  
-  
-`;
-
-  fs.writeFileSync(path.join(srcPath, "queryClient.js"), queryClientContent);
-  fs.writeFileSync(path.join(hooksPath, "useAuth.js"), useAuthContent);
+  readAndWriteTemplate(
+    "useAuthReactTemplate.js",
+    path.join(hooksPath, "useAuth.js")
+  );
 
   console.log("React Query files created successfully.");
 };
 
-const appJsContent = String.raw`
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Login from './components/Login';
-import Register from './components/Register';
+const createOrUpdateComponentFiles = (projectPath) => {
+  const componentsDir = path.join(projectPath, "src/components");
+  fs.mkdirSync(componentsDir, { recursive: true });
 
-const App = () => {
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="*" element={<h1>Not Found</h1>} />
-      </Routes>
-    </Router>
+  readAndWriteTemplate(
+    "LoginComponentReactTemplate.js",
+    path.join(componentsDir, "Login.js")
+  );
+  readAndWriteTemplate(
+    "RegisterComponentReactTemplate.js",
+    path.join(componentsDir, "Register.js")
+  );
+  readAndWriteTemplate(
+    "AppReactTemplate.js",
+    path.join(projectPath, "src", "App.js")
   );
 };
 
-export default App;
-`;
-
-const loginJsContent = String.raw`
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useLogin } from "../hooks/useAuth";
-
-const Login = () => {
-  const navigate = useNavigate();
-  const { mutate: login, isLoading } = useLogin();
-
-  const [formData, setFormData] = useState({ email: "", password: "" });
-  const [errors, setErrors] = useState({});
-
-  const validate = () => {
-    const errors = {};
-    if (!/^\S+@\S+$/.test(formData.email)) {
-      errors.email = "Invalid email";
-    }
-    if (formData.password.length < 6) {
-      errors.password = "Password must be at least 6 characters";
-    }
-    return errors;
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const validationErrors = validate();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-    } else {
-      login(formData, {
-        onSuccess: () => {
-          navigate("/loggedIn");
-        },
-        onError: (validationErrors) => {
-          setErrors(validationErrors);
-        },
-      });
-    }
-  };
-
-  return (
-    <div>
-      <h1>Welcome back!</h1>
-      <p>
-        Do not have an account yet? <a href="/register">Create account</a>
-      </p>
-
-      <div>
-        <form onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              name="email"
-              id="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-            {errors.email && <span>{errors.email}</span>}
-          </div>
-          <div>
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
-            {errors.password && <span>{errors.password}</span>}
-          </div>
-          <div>
-            <button type="submit" disabled={isLoading}>
-              {isLoading ? "Logging in..." : "Login"}
-            </button>
-          </div>
-          {errors && <span>{errors.message}</span>}
-        </form>
-      </div>
-    </div>
-  );
+const createApiAndQueryFiles = (projectPath, projectConfig) => {
+  createApiFiles(path.join(projectPath, "src/api"));
+  createReactQueryFiles(path.join(projectPath, "src"));
+  createOrUpdateIndexFile(path.join(projectPath, "src"), projectConfig);
 };
 
-export default Login;
-`;
-
-const registerJsContent = String.raw`
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useRegister } from '../hooks/useAuth';
-
-const Register = () => {
-  const navigate = useNavigate();
-  const { mutate: register, isLoading } = useRegister();
-
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    confirmPassword: '',
-  });
-
-  const [errors, setErrors] = useState({});
-
-  const validate = () => {
-    const errors = {};
-    if (!/^\S+@\S+$/.test(formData.email)) {
-      errors.email = 'Invalid email';
-    }
-    if (formData.password.length < 6) {
-      errors.password = 'Password must be at least 6 characters';
-    }
-    if (formData.password !== formData.confirmPassword) {
-      errors.confirmPassword = 'Passwords do not match';
-    }
-    return errors;
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const validationErrors = validate();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-    } else {
-      register(formData, {
-        onSuccess: () => {
-          navigate('/loggedIN');
-        },
-        onError: (validationErrors) => {
-          setErrors(validationErrors);
-        },
-      });
-    }
-  };
-
-  return (
-    <div>
-      <h1>Create an Account</h1>
-      <p>
-        Already have an account? <a href="/login">Login</a>
-      </p>
-
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-          {errors.email && <span>{errors.email}</span>}
-        </div>
-        <div>
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-          {errors.password && <span>{errors.password}</span>}
-        </div>
-        <div>
-          <label htmlFor="confirmPassword">Confirm Password</label>
-          <input
-            type="password"
-            id="confirmPassword"
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            required
-          />
-          {errors.confirmPassword && <span>{errors.confirmPassword}</span>}
-        </div>
-        <div>
-          <button type="submit" disabled={isLoading}>
-            {isLoading ? 'Registering...' : 'Register'}
-          </button>
-        </div>
-      </form>
-    </div>
-  );
+const createEnvFile = (projectPath) => {
+  fs.writeFileSync(path.join(projectPath, ".env"), envReactContent);
 };
 
-export default Register;
-`;
-const generateApiFilesScript = String.raw`
-// backend/scripts/generateApiFiles.js
-const mongoose = require("mongoose");
-const fs = require("fs");
-const path = require("path");
-const Schema = require("../models/Schema");
-require("dotenv").config();
+const updatePackageJsonScripts = (projectPath, projectConfig) => {
+  const packageJsonPath = path.join(projectPath, "package.json");
+  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
 
-// Connect to the database
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+  spawn.sync("npm", ["install", "concurrently"], { stdio: "inherit" });
 
-const toCamelCase = (str) => {
-  return str.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, (match, index) => {
-    if (+match === 0) return ""; // or if (/\s+/.test(match)) for white spaces
-    return index === 0 ? match.toLowerCase() : match.toUpperCase();
-  });
-};
+  let startScripts = ['"react-scripts start"'];
 
-const generateApiFileContent = (modelName) => {
-  const pluralModelName = modelName.toLowerCase();
-  const camelModelName = toCamelCase(modelName);
-  return \`// Example API file for \${modelName}
-import axiosInstance from "./axiosInstance";
-
-export const get\${camelModelName}s = async () => {
-  const response = await axiosInstance.get("/\${pluralModelName}s");
-  return response.data;
-};
-
-export const get\${camelModelName}ById = async (id) => {
-  const response = await axiosInstance.get(\`/\${pluralModelName}s/\${id}\`);
-  return response.data;
-};
-
-export const create\${camelModelName} = async (\${pluralModelName}Data) => {
-  const response = await axiosInstance.post("/\${pluralModelName}s", \${pluralModelName}Data);
-  return response.data;
-};
-
-export const update\${camelModelName} = async (id, \${pluralModelName}Data) => {
-  const response = await axiosInstance.put(\`/\${pluralModelName}s/\${id}\`, \${pluralModelName}Data);
-  return response.data;
-};
-
-export const delete\${camelModelName} = async (id) => {
-  const response = await axiosInstance.delete(\`/\${pluralModelName}s/\${id}\`);
-  return response.data;
-};
-\`;
-};
-
-const writeApiFile = (apiPath, modelName) => {
-  const content = generateApiFileContent(modelName);
-  const filePath = path.join(apiPath, \`\${modelName.toLowerCase()}API.js\`);
-  fs.writeFileSync(filePath, content);
-  console.log(\`API file for \${modelName} created successfully.\`);
-};
-
-const generateApiFiles = async () => {
-  try {
-    const schemas = await Schema.find();
-    const frontendPath = path.join(__dirname, "../../frontend");
-    const apiPath = path.join(frontendPath, "src/api");
-
-    // Check if the frontend directory exists
-    if (!fs.existsSync(frontendPath)) {
-      console.log("No React app setup found. Skipping API file generation.");
-      return;
-    }
-
-    if (!fs.existsSync(apiPath)) {
-      fs.mkdirSync(apiPath, { recursive: true });
-    }
-
-    schemas.forEach((schema) => {
-      writeApiFile(apiPath, schema.modelName);
-    });
-
-    console.log("All API files generated successfully.");
-  } catch (err) {
-    console.error("Error generating API files:", err);
-  } finally {
-    mongoose.connection.close();
+  if (projectConfig.backend && !projectConfig.electron) {
+    startScripts.push('"npm run start:backend"');
+    packageJson.scripts["start:backend"] = "cd ../backend && npm start";
   }
+
+  packageJson.scripts = {
+    ...packageJson.scripts,
+    start: `concurrently ${startScripts.join(" ")}`,
+  };
+
+  fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
 };
 
-generateApiFiles();
-`;
+const installAdditionalDependencies = () => {
+  spawn.sync(
+    "npm",
+    ["install", "axios", "@tanstack/react-query", "react-router-dom"],
+    { stdio: "inherit" }
+  );
+};
+
+const addApiGenerationScriptToBackend = (projectPath) => {
+  const backendScriptsDir = path.join(projectPath, "../backend/scripts");
+  if (!fs.existsSync(backendScriptsDir)) {
+    fs.mkdirSync(backendScriptsDir, { recursive: true });
+  }
+
+  readAndWriteTemplate(
+    "generateApiFilesTemplate.js",
+    path.join(backendScriptsDir, "generateApiFiles.js")
+  );
+
+  const backendPackageJsonPath = path.join(
+    projectPath,
+    "../backend/package.json"
+  );
+  const backendPackageJson = JSON.parse(
+    fs.readFileSync(backendPackageJsonPath, "utf8")
+  );
+
+  backendPackageJson.scripts = {
+    ...backendPackageJson.scripts,
+    "generate-api-files": "node scripts/generateApiFiles.js",
+  };
+
+  fs.writeFileSync(
+    backendPackageJsonPath,
+    JSON.stringify(backendPackageJson, null, 2)
+  );
+
+  console.log("Script to generate API files added to backend/package.json.");
+};
 
 module.exports = {
-  createApiFiles,
-  createReactQueryFiles,
-  createOrUpdateIndexFile,
-  appJsContent,
-  loginJsContent,
-  registerJsContent,
-  generateApiFilesScript,
+  createOrUpdateComponentFiles,
+  createEnvFile,
+  createApiAndQueryFiles,
+  updatePackageJsonScripts,
+  installAdditionalDependencies,
+  addApiGenerationScriptToBackend,
 };

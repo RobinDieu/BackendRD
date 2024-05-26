@@ -1,7 +1,4 @@
-const serverJsWithoutHttpsContent = `
-const fs = require("fs");
 const http = require("http");
-const path = require("path");
 const app = require("./app");
 const logger = require("./config/logger");
 const { connectDB, disconnectDB } = require("./config/db");
@@ -14,7 +11,7 @@ const startServer = async () => {
   await connectDB();
 
   const server = http.createServer(app).listen(PORT, () => {
-    logger.info(\`Server running on port \${PORT}\`);
+    logger.info(`Server running on port ${PORT}`);
   });
 
   // Handle graceful shutdown
@@ -32,8 +29,3 @@ const startServer = async () => {
 };
 
 startServer();
-`;
-
-module.exports = {
-  serverJsWithoutHttpsContent,
-};

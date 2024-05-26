@@ -2,8 +2,6 @@ const path = require("path");
 const fs = require("fs");
 
 const listRoutes = async () => {
-  // listRoutes is in /cli/commands/listRoutes.js
-  // routes.json is in /cli/config/routes.json
   const routesFilePath = path.resolve(__dirname, "../config/routes.json");
 
   fs.readFile(routesFilePath, "utf8", (err, data) => {

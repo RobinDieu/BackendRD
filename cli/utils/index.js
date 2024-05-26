@@ -1,4 +1,3 @@
-const { runCommand } = require("./commandUtils");
 const {
   promptForSchemaFields,
   formatSchemaDefinition,
@@ -8,35 +7,66 @@ const {
   promptForUserDetails,
   promptForUserUpdateDetails,
 } = require("./userUtils");
-const { getProjectConfig } = require("./projectUtils");
 const {
-  appJsContent,
-  registerJsContent,
-  loginJsContent,
-  createApiFiles,
-  createReactQueryFiles,
-  createOrUpdateIndexFile,
-  generateApiFilesScript,
+  getProjectPath,
+  createProjectDirectory,
+  getProjectTypes,
+  getProjectConfig,
+} = require("./projectUtils");
+const {
+  createOrUpdateComponentFiles,
+  createEnvFile,
+  updatePackageJsonScripts,
+  createApiAndQueryFiles,
+  installAdditionalDependencies,
+  addApiGenerationScriptToBackend,
 } = require("./reactUtils");
+const {
+  cloneBackendRepo,
+  installDependencies,
+  createEnvFileBackend,
+  generateSelfSignedCerts,
+  setupServerFile,
+} = require("../utils/backendUtils");
 const { envBackupContent, envReactContent } = require("./envUtils");
-const { serverJsWithoutHttpsContent } = require("./serverUtils");
+const { readAndWriteTemplate } = require("./templateUtils");
+const {
+  createProjectDirectoryElectron,
+  initializeNpmProject,
+  installElectronDependencies,
+  setupMainJsFile,
+  updatePackageJsonScriptsElectron,
+} = require("./electronUtils");
+const { createAxiosInstance } = require("./axiosUtils");
 
 module.exports = {
-  runCommand,
   promptForSchemaFields,
   formatSchemaDefinition,
   promptForRecordFields,
   promptForUserDetails,
   promptForUserUpdateDetails,
   getProjectConfig,
-  createApiFiles,
-  createReactQueryFiles,
-  createOrUpdateIndexFile,
-  appJsContent,
-  registerJsContent,
-  loginJsContent,
+  createOrUpdateComponentFiles,
+  readAndWriteTemplate,
   envBackupContent,
   envReactContent,
-  serverJsWithoutHttpsContent,
-  generateApiFilesScript,
+  createApiAndQueryFiles,
+  createEnvFile,
+  updatePackageJsonScripts,
+  installAdditionalDependencies,
+  addApiGenerationScriptToBackend,
+  cloneBackendRepo,
+  installDependencies,
+  createEnvFileBackend,
+  generateSelfSignedCerts,
+  setupServerFile,
+  getProjectPath,
+  createProjectDirectory,
+  getProjectTypes,
+  createProjectDirectoryElectron,
+  initializeNpmProject,
+  installElectronDependencies,
+  setupMainJsFile,
+  updatePackageJsonScriptsElectron,
+  createAxiosInstance,
 };

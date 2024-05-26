@@ -1,12 +1,11 @@
-const axios = require("axios");
-const https = require("https");
 const path = require("path");
-require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
 const API_KEY = require("../config/apiKey");
 const {
   promptForSchemaFields,
   formatSchemaDefinition,
-} = require("../utils/index");
+  createAxiosInstance,
+} = require("../utils");
+require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
 
 if (!API_KEY) {
   console.error("API_KEY is not defined in the .env file");
@@ -14,16 +13,7 @@ if (!API_KEY) {
 }
 
 const BASE_URL = process.env.BASE_URL;
-
-// Create an axios instance with custom httpsAgent
-const axiosInstance = axios.create({
-  httpsAgent: new https.Agent({
-    rejectUnauthorized: false,
-  }),
-  headers: {
-    "x-api-key": API_KEY,
-  },
-});
+const axiosInstance = createAxiosInstance();
 
 const createSchema = async (modelName) => {
   try {
