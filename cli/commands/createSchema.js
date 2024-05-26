@@ -6,7 +6,7 @@ const API_KEY = require("../config/apiKey");
 const {
   promptForSchemaFields,
   formatSchemaDefinition,
-} = require("../utils/helpers");
+} = require("../utils/index");
 
 if (!API_KEY) {
   console.error("API_KEY is not defined in the .env file");

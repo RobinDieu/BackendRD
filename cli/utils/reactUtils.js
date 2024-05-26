@@ -1,160 +1,36 @@
-const { execSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 
-const runCommand = (command, options = {}) => {
-  try {
-    execSync(command, { stdio: "inherit", ...options });
-  } catch (error) {
-    console.error(`Error executing command: ${command}`);
-    process.exit(1);
-  }
-};
+const createIndexFileContent = (projectConfig) => {
+  let imports = `import React from "react";\nimport { createRoot } from "react-dom/client";\n`;
+  let providers = "";
+  let appWrapperStart = "";
+  let appWrapperEnd = "";
 
-const promptForSchemaFields = async () => {
-  const inquirer = (await import("inquirer")).default;
-  const fields = [];
-  let addMore = true;
-
-  while (addMore) {
-    const { fieldName, fieldType, isRequired, addAnother } =
-      await inquirer.prompt([
-        {
-          type: "input",
-          name: "fieldName",
-          message: "Enter field name:",
-        },
-        {
-          type: "list",
-          name: "fieldType",
-          message: "Select field type:",
-          choices: ["String", "Number", "Boolean", "Date", "Array", "Object"],
-        },
-        {
-          type: "confirm",
-          name: "isRequired",
-          message: "Is this field required?",
-          default: false,
-        },
-        {
-          type: "confirm",
-          name: "addAnother",
-          message: "Do you want to add another field?",
-          default: true,
-        },
-      ]);
-
-    fields.push({
-      fieldName,
-      fieldType,
-      isRequired,
-    });
-
-    addMore = addAnother;
+  if (projectConfig.backend) {
+    imports += `import { QueryClientProvider } from "@tanstack/react-query";\nimport queryClient from "./queryClient";\n`;
+    providers += `  <QueryClientProvider client={queryClient}>\n`;
+    appWrapperStart += `  `;
+    appWrapperEnd = `  </QueryClientProvider>\n` + appWrapperEnd;
   }
 
-  return fields;
-};
-
-const formatSchemaDefinition = (fields) => {
-  const schemaDefinition = {};
-  fields.forEach(({ fieldName, fieldType, isRequired }) => {
-    schemaDefinition[fieldName] = {
-      type: fieldType,
-      required: isRequired,
-    };
-  });
-  return schemaDefinition;
-};
-
-const promptForRecordFields = async (schemaDefinition) => {
-  const inquirer = (await import("inquirer")).default;
-  const record = {};
-
-  for (const fieldName in schemaDefinition) {
-    const fieldType = schemaDefinition[fieldName].type;
-    const isRequired = schemaDefinition[fieldName].required;
-
-    const { fieldValue } = await inquirer.prompt([
-      {
-        type: "input",
-        name: "fieldValue",
-        message: `Enter value for ${fieldName} (${fieldType}):`,
-        validate: (input) => {
-          if (isRequired && !input) {
-            return `${fieldName} is required`;
-          }
-          return true;
-        },
-      },
-    ]);
-
-    record[fieldName] = fieldValue;
+  if (projectConfig.mantine) {
+    imports += `import { MantineProvider } from "@mantine/core";\n`;
+    providers += `  <MantineProvider withGlobalStyles withNormalizeCSS>\n`;
+    appWrapperStart += `  `;
+    appWrapperEnd = `  </MantineProvider>\n` + appWrapperEnd;
   }
 
-  return record;
+  const content = `${imports}import App from "./App";\n\nconst container = document.getElementById("root");\nconst root = createRoot(container);\n\nroot.render(\n${providers}${appWrapperStart}<App />\n${appWrapperEnd});\n`;
+
+  return content;
 };
 
-const promptForUserDetails = async () => {
-  const inquirer = (await import("inquirer")).default;
-  const { email, password, roles } = await inquirer.prompt([
-    {
-      type: "input",
-      name: "email",
-      message: "Enter user email:",
-    },
-    {
-      type: "password",
-      name: "password",
-      message: "Enter user password:",
-    },
-    {
-      type: "input",
-      name: "roles",
-      message: "Enter user roles (comma-separated):",
-      filter: (input) =>
-        input ? input.split(",").map((role) => role.trim()) : undefined,
-    },
-  ]);
+const createOrUpdateIndexFile = (srcPath, projectConfig) => {
+  const indexPath = path.join(srcPath, "index.js");
+  const indexContent = createIndexFileContent(projectConfig);
 
-  return { email, password, roles };
-};
-
-const promptForUserUpdateDetails = async () => {
-  const inquirer = (await import("inquirer")).default;
-  const { email, newEmail, newPassword } = await inquirer.prompt([
-    {
-      type: "input",
-      name: "email",
-      message: "Enter user email to update:",
-    },
-    {
-      type: "input",
-      name: "newEmail",
-      message: "Enter new email (leave blank to keep current):",
-    },
-    {
-      type: "password",
-      name: "newPassword",
-      message: "Enter new password (leave blank to keep current):",
-    },
-  ]);
-
-  return { email, newEmail, newPassword };
-};
-
-const getProjectConfig = (projectTypes) => {
-  const projectConfig = {
-    react: false,
-    electron: false,
-    backend: false,
-  };
-
-  projectTypes.forEach((type) => {
-    projectConfig[type.toLowerCase()] = true;
-  });
-
-  return projectConfig;
+  fs.writeFileSync(indexPath, indexContent);
 };
 
 const createApiFiles = (apiPath) => {
@@ -288,100 +164,6 @@ const createReactQueryFiles = (srcPath) => {
   console.log("React Query files created successfully.");
 };
 
-const createOrUpdateIndexFile = (srcPath) => {
-  const indexPath = path.join(srcPath, "index.js");
-  const indexContent = `import React from "react";
-import { createRoot } from "react-dom/client";
-import { QueryClientProvider } from "@tanstack/react-query";
-import queryClient from "./queryClient";
-import App from "./App";
-
-const container = document.getElementById("root");
-const root = createRoot(container);
-
-root.render(
-  <QueryClientProvider client={queryClient}>
-    <App />
-  </QueryClientProvider>
-);
-`;
-
-  // Check if index.js exists and overwrite it
-  if (fs.existsSync(indexPath)) {
-    console.log("index.js file already exists. Overwriting...");
-  }
-
-  fs.writeFileSync(indexPath, indexContent);
-
-  console.log("index.js file created or updated successfully.");
-};
-
-const serverJsWithoutHttpsContent = `
-const fs = require("fs");
-const http = require("http");
-const path = require("path");
-const app = require("./app");
-const logger = require("./config/logger");
-const { connectDB, disconnectDB } = require("./config/db");
-require("dotenv").config();
-
-// Start server
-const PORT = process.env.PORT || 5000;
-
-const startServer = async () => {
-  await connectDB();
-
-  const server = http.createServer(app).listen(PORT, () => {
-    logger.info(\`Server running on port \${PORT}\`);
-  });
-
-  // Handle graceful shutdown
-  const shutdown = async () => {
-    logger.info("Shutting down server...");
-    await disconnectDB();
-    server.close(() => {
-      logger.info("Server closed");
-      process.exit(0);
-    });
-  };
-
-  process.on("SIGINT", shutdown);
-  process.on("SIGTERM", shutdown);
-};
-
-startServer();
-`;
-
-function envBackupContent(projectName) {
-  return `
-MONGO_URI=mongodb://localhost:27017/${projectName}
-JWT_SECRET=YOU_SHOULD_CHANGE_THIS
-API_KEY=YOU_SHOULD_CHANGE_THIS_TOO
-SESSION_SECRET=YOU_SHOULD_CHANGE_THIS_TOO_AS_WELL
-
-# OAuth Credentials
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-FACEBOOK_APP_ID=your_facebook_app_id
-FACEBOOK_APP_SECRET=your_facebook_app_secret
-MICROSOFT_CLIENT_ID=your_microsoft_client_id
-MICROSOFT_CLIENT_SECRET=your_microsoft_client_secret
-GITHUB_CLIENT_ID=your_github_client_id
-GITHUB_CLIENT_SECRET=your_github_client_secret
-
-# CORS Origin
-CORS_ORIGIN=http://localhost:3000
-
-# Base URL
-BASE_URL=https://localhost:5000/api
-`;
-}
-
-const envReactContent = String.raw`
-REACT_APP_API_URL=http://localhost:5000/api
-REACT_APP_API_KEY=YOU_SHOULD_CHANGE_THIS_TOO
-`;
-
 const appJsContent = String.raw`
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
@@ -494,7 +276,6 @@ const Login = () => {
 };
 
 export default Login;
-
 `;
 
 const registerJsContent = String.raw`
@@ -605,23 +386,13 @@ const Register = () => {
 };
 
 export default Register;
-
 `;
+
 module.exports = {
-  runCommand,
-  getProjectConfig,
-  promptForSchemaFields,
-  formatSchemaDefinition,
-  promptForRecordFields,
-  promptForUserDetails,
-  promptForUserUpdateDetails,
-  envBackupContent,
-  envReactContent,
-  appJsContent,
-  loginJsContent,
-  registerJsContent,
-  serverJsWithoutHttpsContent,
   createApiFiles,
   createReactQueryFiles,
   createOrUpdateIndexFile,
+  appJsContent,
+  loginJsContent,
+  registerJsContent,
 };

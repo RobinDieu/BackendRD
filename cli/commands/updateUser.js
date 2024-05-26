@@ -1,7 +1,7 @@
 const axios = require("axios");
 const https = require("https");
 const API_KEY = require("../config/apiKey");
-const { promptForUserUpdateDetails } = require("../utils/helpers");
+const { promptForUserUpdateDetails } = require("../utils/index");
 require("dotenv").config();
 
 const BASE_URL = process.env.BASE_URL;

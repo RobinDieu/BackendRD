@@ -1,3 +1,4 @@
+// cli/commands/setupBackend.js
 const spawn = require("cross-spawn");
 const path = require("path");
 const fs = require("fs");
@@ -5,7 +6,7 @@ const selfsigned = require("selfsigned");
 const {
   serverJsWithoutHttpsContent,
   envBackupContent,
-} = require("../utils/helpers");
+} = require("../utils/index");
 
 const setupBackendProject = (projectPath, projectConfig) => {
   console.log("Setting up Backend project...");
@@ -27,11 +28,8 @@ const setupBackendProject = (projectPath, projectConfig) => {
   spawn.sync("npm", ["install"], { stdio: "inherit" });
 
   // Create .env file
-
-  fs.writeFileSync(
-    path.join(projectPath, ".env"),
-    envBackupContent(projectName)
-  );
+  const envContent = envBackupContent(projectName);
+  fs.writeFileSync(path.join(projectPath, ".env"), envContent);
 
   // Generate self-signed certificates
   const certs = selfsigned.generate(null, { days: 365 });

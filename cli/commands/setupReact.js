@@ -9,7 +9,7 @@ const {
   loginJsContent,
   registerJsContent,
   appJsContent,
-} = require("../utils/helpers");
+} = require("../utils/index");
 
 const setupReactProject = (projectPath, projectConfig) => {
   console.log("Setting up React project...");
@@ -60,10 +60,10 @@ const setupReactProject = (projectPath, projectConfig) => {
     createApiFiles(path.join(projectPath, "src/api"));
 
     // Create queryClient.js and useAuth.js
-    createReactQueryFiles(path.join(projectPath, "src"));
+    createReactQueryFiles(path.join(projectPath, "src"), projectConfig);
 
     // Create or overwrite index.js file
-    createOrUpdateIndexFile(path.join(projectPath, "src"));
+    createOrUpdateIndexFile(path.join(projectPath, "src"), projectConfig);
 
     // Ensure components directory exists
     const componentsDir = path.join(projectPath, "src/components");
