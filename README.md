@@ -67,7 +67,7 @@ BackendRD is a flexible backend project that allows you to dynamically create da
 4. Generate SSL certificates:
 
    ```bash
-   node generate-certs.js
+   node scripts/generateCerts.js
    ```
 
 ### Running the Project

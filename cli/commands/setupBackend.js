@@ -27,8 +27,10 @@ const setupBackendProject = (projectPath, projectConfig) => {
   // Install dependencies
   spawn.sync("npm", ["install"], { stdio: "inherit" });
 
+  const protocol = projectConfig.react ? "http" : "https";
+
   // Create .env file
-  const envContent = envBackupContent(projectName);
+  const envContent = envBackupContent(projectName, protocol);
   fs.writeFileSync(path.join(projectPath, ".env"), envContent);
 
   // Generate self-signed certificates

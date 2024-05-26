@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "server": "node server.js",
-    "cli": "node cli/cli.js"
+    "cli": "node cli/cli.js",
+    "generate-certificate": "node scripts/generateCert.js"
   },
   "keywords": [],
   "author": "",

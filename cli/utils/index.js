@@ -16,6 +16,7 @@ const {
   createApiFiles,
   createReactQueryFiles,
   createOrUpdateIndexFile,
+  generateApiFilesScript,
 } = require("./reactUtils");
 const { envBackupContent, envReactContent } = require("./envUtils");
 const { serverJsWithoutHttpsContent } = require("./serverUtils");
@@ -37,4 +38,5 @@ module.exports = {
   envBackupContent,
   envReactContent,
   serverJsWithoutHttpsContent,
+  generateApiFilesScript,
 };

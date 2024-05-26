@@ -68,7 +68,6 @@ const startProject = async (projectName, options) => {
   if (uiType !== "None") projectTypes.push(uiType);
 
   const projectConfig = getProjectConfig(projectTypes);
-  console.log("projectConfig:", projectConfig); // Debugging statement
 
   if (projectConfig.backend) {
     setupBackendProject(path.join(projectPath, "backend"), projectConfig);
