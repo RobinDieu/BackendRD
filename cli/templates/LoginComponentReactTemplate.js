@@ -33,7 +33,7 @@ const Login = () => {
     } else {
       login(formData, {
         onSuccess: () => {
-          navigate("/loggedIn");
+          navigate("/user-profile");
         },
         onError: (validationErrors) => {
           setErrors(validationErrors);

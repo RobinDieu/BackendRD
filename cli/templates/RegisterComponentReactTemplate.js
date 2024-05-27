@@ -41,7 +41,7 @@ const Register = () => {
     } else {
       register(formData, {
         onSuccess: () => {
-          navigate("/loggedIN");
+          navigate("/user-profile");
         },
         onError: (validationErrors) => {
           setErrors(validationErrors);

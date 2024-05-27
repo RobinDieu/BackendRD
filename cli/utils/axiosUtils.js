@@ -8,7 +8,7 @@ const createAxiosInstance = () => {
       rejectUnauthorized: false,
     }),
     headers: {
-      "x-api-key": API_KEY,
+      "x-api-key": API_KEY || "YOU_SHOULD_CHANGE_THIS_TOO",
     },
   });
 };

@@ -1,6 +1,9 @@
 const fs = require("fs");
 const path = require("path");
-const { readAndWriteTemplate } = require("./templateUtils");
+const {
+  readAndWriteTemplate,
+  postcssConfigContent,
+} = require("./templateUtils");
 const { envReactContent } = require("./envUtils");
 const spawn = require("cross-spawn");
 
@@ -18,7 +21,7 @@ const createIndexFileContent = (projectConfig) => {
   }
 
   if (projectConfig.mantine) {
-    imports += `import { MantineProvider } from "@mantine/core";\n`;
+    imports += `import { MantineProvider } from "@mantine/core";\nimport "@mantine/core/styles.css";\n`;
     providers += `  <MantineProvider withGlobalStyles withNormalizeCSS>\n`;
     appWrapperStart += `  `;
     appWrapperEnd = `  </MantineProvider>\n` + appWrapperEnd;
@@ -79,10 +82,23 @@ const createReactQueryFiles = (srcPath) => {
 const createOrUpdateComponentFiles = (projectPath) => {
   const componentsDir = path.join(projectPath, "src/components");
   fs.mkdirSync(componentsDir, { recursive: true });
+  const hooksPath = path.join(projectPath, "src", "hooks");
+  if (!fs.existsSync(hooksPath)) {
+    fs.mkdirSync(hooksPath, { recursive: true });
+  }
+
+  readAndWriteTemplate(
+    "useUserDataReactTemplate.js",
+    path.join(hooksPath, "useUserData.js")
+  );
 
   readAndWriteTemplate(
     "LoginComponentReactTemplate.js",
     path.join(componentsDir, "Login.js")
+  );
+  readAndWriteTemplate(
+    "UserProfileReactTemplate.js",
+    path.join(componentsDir, "UserProfile.js")
   );
   readAndWriteTemplate(
     "RegisterComponentReactTemplate.js",
@@ -102,6 +118,13 @@ const createApiAndQueryFiles = (projectPath, projectConfig) => {
 
 const createEnvFileReact = (projectPath) => {
   fs.writeFileSync(path.join(projectPath, ".env"), envReactContent);
+};
+
+const createPostcssConfigFile = (projectPath) => {
+  fs.writeFileSync(
+    path.join(projectPath, "postcss.config.cjs"),
+    postcssConfigContent
+  );
 };
 
 const updatePackageJsonScriptsReact = (projectPath, projectConfig) => {
@@ -173,4 +196,5 @@ module.exports = {
   updatePackageJsonScriptsReact,
   installAdditionalDependencies,
   addApiGenerationScriptToBackend,
+  createPostcssConfigFile,
 };

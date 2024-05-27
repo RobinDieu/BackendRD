@@ -6,6 +6,7 @@ const {
   installAdditionalDependencies,
   addApiGenerationScriptToBackend,
   updatePackageJsonScriptsReact,
+  createPostcssConfigFile,
 } = require("../utils");
 
 const setupReactProject = (projectPath, projectConfig) => {
@@ -17,6 +18,10 @@ const setupReactProject = (projectPath, projectConfig) => {
 
   if (projectConfig.backend) {
     setupReactWithBackend(projectPath, projectConfig);
+  }
+
+  if (projectConfig.mantine) {
+    createPostcssConfigFile(projectPath);
   }
 
   console.log("React project setup complete.");

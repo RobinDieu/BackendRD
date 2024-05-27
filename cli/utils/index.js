@@ -21,6 +21,7 @@ const {
   installAdditionalDependencies,
   addApiGenerationScriptToBackend,
   createOrUpdateIndexFile,
+  createPostcssConfigFile,
 } = require("./reactUtils");
 const {
   cloneBackendRepo,
@@ -73,4 +74,5 @@ module.exports = {
   updatePackageJsonScriptsElectron,
   createAxiosInstance,
   setupSessionMiddleware,
+  createPostcssConfigFile,
 };

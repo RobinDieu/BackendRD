@@ -3,46 +3,47 @@ const mongoose = require("mongoose");
 const fs = require("fs");
 const path = require("path");
 const Schema = require("../models/Schema");
+const pluralize = require("pluralize");
 require("dotenv").config();
 
 // Connect to the database
 mongoose.connect(process.env.MONGO_URI);
 
-const toCamelCase = (str) => {
-  return str.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, (match, index) => {
-    if (+match === 0) return ""; // or if (/\s+/.test(match)) for white spaces
-    return index === 0 ? match.toLowerCase() : match.toUpperCase();
-  });
+const capitalizeFirstLetter = (str) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
 const generateApiFileContent = (modelName) => {
-  const pluralModelName = modelName.toLowerCase();
-  const camelModelName = toCamelCase(modelName);
+  const modelNameLowerCase = modelName.toLowerCase();
+  const camelModelName = capitalizeFirstLetter(modelNameLowerCase);
+  const singularModelName = pluralize.singular(modelNameLowerCase);
+  const camelSingularModelName = capitalizeFirstLetter(singularModelName);
+
   return `// Example API file for ${modelName}
 import axiosInstance from "./axiosInstance";
 
-export const get${camelModelName}s = async () => {
-  const response = await axiosInstance.get("/${pluralModelName}s");
+export const get${camelModelName} = async () => {
+  const response = await axiosInstance.get("/${modelNameLowerCase}");
   return response.data;
 };
 
-export const get${camelModelName}ById = async (id) => {
-  const response = await axiosInstance.get(\`/${pluralModelName}s/\${id}\`);
+export const get${camelSingularModelName}ById = async (id) => {
+  const response = await axiosInstance.get(\`/${modelNameLowerCase}/\${id}\`);
   return response.data;
 };
 
-export const create${camelModelName} = async (${pluralModelName}Data) => {
-  const response = await axiosInstance.post("/${pluralModelName}s", ${pluralModelName}Data);
+export const create${camelSingularModelName} = async (${camelSingularModelName}Data) => {
+  const response = await axiosInstance.post("/${modelNameLowerCase}", ${camelSingularModelName}Data);
   return response.data;
 };
 
-export const update${camelModelName} = async (id, ${pluralModelName}Data) => {
-  const response = await axiosInstance.put(\`/${pluralModelName}s/\${id}\`, ${pluralModelName}Data);
+export const update${camelSingularModelName} = async (id, ${camelSingularModelName}Data) => {
+  const response = await axiosInstance.put(\`/${modelNameLowerCase}/\${id}\`, ${camelSingularModelName}Data);
   return response.data;
 };
 
-export const delete${camelModelName} = async (id) => {
-  const response = await axiosInstance.delete(\`/${pluralModelName}s/\${id}\`);
+export const delete${camelSingularModelName} = async (id) => {
+  const response = await axiosInstance.delete(\`/${modelNameLowerCase}/\${id}\`);
   return response.data;
 };
 `;

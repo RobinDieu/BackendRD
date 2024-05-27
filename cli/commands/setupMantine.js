@@ -11,6 +11,21 @@ const setupMantine = (projectPath) => {
     stdio: "inherit",
   });
 
+  // Install additional dependencies as devDependencies
+  spawn.sync(
+    "npm",
+    [
+      "install",
+      "--save-dev",
+      "postcss",
+      "postcss-preset-mantine",
+      "postcss-simple-vars",
+    ],
+    {
+      stdio: "inherit",
+    }
+  );
+
   console.log("Mantine setup complete.");
 };
 
