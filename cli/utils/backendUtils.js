@@ -46,7 +46,7 @@ const setupSessionMiddleware = (projectPath, useHttps) => {
     : "sessionMiddlewareWithoutHttpsTemplate.js";
   readAndWriteTemplate(
     templateFileName,
-    path.join(projectPath, "sessionMiddleware.js")
+    path.join(projectPath, "middleware", "session.js")
   );
 };
 

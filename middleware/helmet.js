@@ -10,14 +10,14 @@ const helmetMiddleware = helmet({
       styleSrc: ["'self'"],
       baseUri: ["'self'"],
       formAction: ["'self'"],
-      reportUri: "/report-csp-violation",
-      upgradeInsecureRequests: true,
-      workerSrc: false,
+      reportUri: ["/report-csp-violation"],
+      upgradeInsecureRequests: [],
+      workerSrc: [],
     },
   },
   expectCt: {
     enforce: true,
-    maxAge: 30, // 30 minutes
+    maxAge: 30 * 60, // 30 minutes in seconds
   },
 });
 
