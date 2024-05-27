@@ -22,7 +22,9 @@ const getModel = (req, res, next) => {
     next();
   } catch (err) {
     logger.warn(`Model ${modelName} does not exist`);
-    return res.status(400).json({ msg: `Model ${modelName} does not exist` });
+    return res
+      .status(400)
+      .json({ msg: `Model ${modelName} does not exist`, err: err.message });
   }
 };
 

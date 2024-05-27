@@ -27,7 +27,7 @@ export const get${camelModelName}s = async () => {
 };
 
 export const get${camelModelName}ById = async (id) => {
-  const response = await axiosInstance.get(\`/${pluralModelName}s/${id}\`);
+  const response = await axiosInstance.get(\`/${pluralModelName}s/\${id}\`);
   return response.data;
 };
 
@@ -37,12 +37,12 @@ export const create${camelModelName} = async (${pluralModelName}Data) => {
 };
 
 export const update${camelModelName} = async (id, ${pluralModelName}Data) => {
-  const response = await axiosInstance.put(\`/${pluralModelName}s/${id}\`, ${pluralModelName}Data);
+  const response = await axiosInstance.put(\`/${pluralModelName}s/\${id}\`, ${pluralModelName}Data);
   return response.data;
 };
 
 export const delete${camelModelName} = async (id) => {
-  const response = await axiosInstance.delete(\`/${pluralModelName}s/${id}\`);
+  const response = await axiosInstance.delete(\`/${pluralModelName}s/\${id}\`);
   return response.data;
 };
 `;

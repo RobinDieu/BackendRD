@@ -35,5 +35,10 @@
     "pluralize": "^8.0.0",
     "selfsigned": "^2.4.1",
     "winston": "^3.13.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.3.0",
+    "eslint": "^9.3.0",
+    "globals": "^15.3.0"
   }
 }

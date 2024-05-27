@@ -62,7 +62,8 @@ const initializeApp = async () => {
   app.use("/api/dynamic", require("./routes/dynamic"));
   app.use("/api", require("./routes/crud"));
 
-  // Error handling middleware
+  // Error handling middlewares
+  // eslint-disable-next-line no-unused-vars
   app.use((err, req, res, next) => {
     logger.error(err.message);
     res.status(500).send("Server error");
