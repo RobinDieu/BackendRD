@@ -3,10 +3,11 @@ const cors = require("cors");
 const rateLimit = require("./middleware/rateLimit");
 const apiKeyAuth = require("./middleware/apiKeyAuth");
 const passportAuth = require("./middleware/passportAuth");
-const session = require("express-session");
 const logger = require("./config/logger");
 const createDynamicModel = require("./models/DynamicModel");
 const Schema = require("./models/Schema");
+const sessionMiddleware = require("./middleware/session");
+const helmetMiddleware = require("./middleware/helmet");
 require("dotenv").config();
 
 const app = express();
@@ -19,22 +20,13 @@ const corsOptions = {
   optionsSuccessStatus: 204,
 };
 
-app.use(cors(corsOptions));
-
 // Middleware
+app.use(cors(corsOptions));
+app.use(helmetMiddleware);
 app.use(express.json());
 app.use(rateLimit);
 app.use(apiKeyAuth);
-
-// Configure and use express-session middleware
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET || "your_session_secret",
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: true }, // Set to true if using HTTPS
-  })
-);
+app.use(sessionMiddleware);
 
 passportAuth(app); // Initialize Passport and session middleware
 

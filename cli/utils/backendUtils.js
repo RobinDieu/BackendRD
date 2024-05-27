@@ -40,10 +40,21 @@ const setupServerFile = (projectPath, useHttps) => {
   readAndWriteTemplate(templateFileName, path.join(projectPath, "server.js"));
 };
 
+const setupSessionMiddleware = (projectPath, useHttps) => {
+  const templateFileName = useHttps
+    ? "sessionMiddlewareTemplate.js"
+    : "sessionMiddlewareWithoutHttpsTemplate.js";
+  readAndWriteTemplate(
+    templateFileName,
+    path.join(projectPath, "sessionMiddleware.js")
+  );
+};
+
 module.exports = {
   cloneBackendRepo,
   installDependencies,
   createEnvFileBackend,
   generateSelfSignedCerts,
   setupServerFile,
+  setupSessionMiddleware,
 };

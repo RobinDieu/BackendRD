@@ -28,6 +28,7 @@ const {
   createEnvFileBackend,
   generateSelfSignedCerts,
   setupServerFile,
+  setupSessionMiddleware,
 } = require("../utils/backendUtils");
 const { envBackupContent, envReactContent } = require("./envUtils");
 const { readAndWriteTemplate } = require("./templateUtils");
@@ -71,4 +72,5 @@ module.exports = {
   setupMainJsFile,
   updatePackageJsonScriptsElectron,
   createAxiosInstance,
+  setupSessionMiddleware,
 };

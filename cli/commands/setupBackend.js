@@ -4,6 +4,7 @@ const {
   createEnvFileBackend,
   generateSelfSignedCerts,
   setupServerFile,
+  setupSessionMiddleware,
 } = require("../utils");
 const path = require("path");
 
@@ -22,6 +23,7 @@ const setupBackendProject = (projectPath, projectConfig) => {
 
   if (projectConfig.react) {
     setupServerFile(projectPath, false);
+    setupSessionMiddleware(projectPath, false);
   }
 
   console.log("Backend project setup complete.");
